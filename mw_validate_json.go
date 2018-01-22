@@ -47,7 +47,7 @@ func (k *ValidateJSON) ProcessRequest(w http.ResponseWriter, r *http.Request, _ 
 	rCopy := copyRequest(r)
 	bodyBytes, err := ioutil.ReadAll(rCopy.Body)
 	if err != nil {
-		return err, http.StatusInternalServerError
+		return err, http.StatusBadRequest
 	}
 	defer rCopy.Body.Close()
 
@@ -55,7 +55,7 @@ func (k *ValidateJSON) ProcessRequest(w http.ResponseWriter, r *http.Request, _ 
 
 	result, err := k.validate(bodyBytes, schema)
 	if err != nil {
-		return err, http.StatusInternalServerError
+		return fmt.Errorf("JSON parsing error: %v", err), http.StatusBadRequest
 	}
 
 	if !result.Valid() {
